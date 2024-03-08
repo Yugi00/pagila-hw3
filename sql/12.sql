@@ -4,7 +4,7 @@
  *
  * Write a SQL query that finds all action fanatics.
  */
-SELECT c.customer_id, c.first_name, c.last_name
+/*SELECT c.customer_id, c.first_name, c.last_name
 from customer c
 join (
     select customer_id, row_number() over(partition by customer_id order by rental_date desc) as row_num, count(*) filter(where c.name='Action') over(partition by customer_id) as action_count
@@ -18,3 +18,20 @@ where row_num<=5 and action_count>=4
 group by c.customer_id, c.first_name, c.last_name
 having count(*)=5
 order by c.customer_id;
+*/
+SELECT c.customer_id, c.first_name, c.last_name
+FROM customer c
+LEFT JOIN LATERAL (
+      SELECT *
+      FROM rental r
+      WHERE customer_id = c.customer_id
+      ORDER BY rental_date desc
+      LIMIT 5
+) as rental ON TRUE
+JOIN inventory USING (inventory_id)
+JOIN film USING(film_id)
+JOIN film_category USING(film_id)
+WHERE category_id = 1
+GROUP BY c.customer_id
+HAVING count(c.customer_id) >=4
+ORDER BY c.customer_id;
