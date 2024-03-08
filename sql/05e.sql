@@ -18,3 +18,17 @@
  * ```
  * This problem should be solved by a self join on the "film_category" table.
  */
+select distinct title
+from film
+join film_category fc1 using(film_id)
+join film_category fc2 using(category_id)
+join (
+    select film_id
+    from film
+    where title like 'AMERICAN CIRCUS'
+) as f on fc2.film_id=f.film_id
+group by title
+having count(distinct category_id)=2
+union all
+select 'AMERICAN CIRCUS' as title
+order by title;

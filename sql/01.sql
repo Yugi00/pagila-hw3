@@ -12,3 +12,11 @@
  *
  * Your goal should be to have your queries remain correct even if the data in the database changes arbitrarily.
  */
+select count(*) from (
+    select customer_id 
+    from customer 
+    join address using(address_id) 
+    join city using(city_id) 
+    join country using(country_id) 
+    where country.country not like 'United States'
+) as c;
